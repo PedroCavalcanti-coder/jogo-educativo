@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiro Grito - A Jornada do Parto Humanizado</title>
+    <style>
+        /* --- GERAL --- */
+        :root {
+            --pink: #FF78B0;
+            --lavender: #C9A6FF;
+            --mint: #CFFFE6;
+            --deep: #22619F;
+            --white: #FFFFFF;
+            --text-dark: #2c3e50;
+            --bg-light: linear-gradient(180deg, #fff8fb 0%, #f4fff8 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 12px;
+            color: var(--deep);
+        }
+
+        /* --- DECORAÇÃO DE PÉTALAS (do seu código original) --- */
+        .flowers-row {
+            font-size: 24px;
+            line-height: 1;
+            pointer-events: none;
+            opacity: .8;
+            margin: 10px 0;
+            user-select: none;
+        }
+
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            font-size: 18px;
+            opacity: 0.9;
+            will-change: transform, opacity;
+            animation: floatPetal linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes floatPetal {
+            from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0.15; }
+        }
+
+        /* --- TELA INICIAL (Baseada na Imagem 2) --- */
+        #startScreen {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+            border-radius: 24px;
+            padding: 26px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            border: 6px solid transparent;
+            background-image:
+                linear-gradient(white, white),
+                radial-gradient(closest-side, rgba(255,120,176,0.25), rgba(201,166,255,0.08));
+            background-origin: padding-box, border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        /* Brilho suave da borda */
+        #startScreen::after {
+            content: "";
+            position: absolute;
+            inset: -6px;
+            z-index: -1;
+            border-radius: 28px;
+            background: conic-gradient(from 180deg at 50% 50%, #FFD6EB, #FEE7C6, #E9FDEB, #EDE6FF, #FFD6EB);
+            filter: blur(8px);
+            opacity: 0.45;
+        }
+
+        #startScreen h1 {
+            color: var(--pink);
+            font-size: 2.8em;
+            margin: 10px 0 6px;
+            text-shadow: 1px 1px 0 rgba(34,97,159,0.06);
+        }
+
+        #startScreen .subtitle {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--deep);
+            margin: 0 0 12px;
+            border-bottom: 2px dashed rgba(255,120,176,0.25);
+            padding-bottom: 10px;
+        }
+        
+        #startScreen .title-flowers {
+            font-size: 18px;
+            letter-spacing: 6px;
+            color: rgba(255,120,176,0.95);
+            user-select: none;
+        }
+
+        #startScreen .illustration {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            border: 6px solid rgba(255,120,176,0.12);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff8fb, #f5fffb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 56px;
+            line-height: 1;
+            box-shadow: 0 6px 18px rgba(34,97,159,0.08);
+        }
+        
+        #highScore {
+            font-size: 1.2em;
+            font-weight: 800;
+            color: var(--deep);
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(201, 166, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        #startButton {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 1.2em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            box-shadow: 0 6px rgba(34,97,159,0.08);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        /* --- JOGO DA ROLETA (Baseado na Imagem 1) --- */
+        #wheelApp {
+            display: none; /* Começa oculto */
+            width: 100%;
+            max-width: 760px;
+            margin-top: 20px;
+        }
+
+        .wheel-container {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), #fff);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(34,97,159,0.08);
+            text-align: center;
+        }
+
+        .wheel-header {
+            font-size: 1.4rem;
+            color: var(--pink);
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        /* Wrapper para centralizar a roleta e o pino */
+        .wheel-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Pino (Pointer) */
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 28px solid var(--deep);
+            position: absolute;
+            top: -10px; /* Acima da roleta */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            filter: drop-shadow(0 -2px 2px rgba(0,0,0,0.15));
+        }
+
+        /* A ROLETA (com CSS Conic Gradient) */
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid var(--white);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            /* Gradiente de 8 cores (baseado na Imagem 1) */
+            background: conic-gradient(
+                #fde18a 0deg 45deg,     /* Amarelo */
+                #ffb671 45deg 90deg,     /* Laranja */
+                #f77b7c 90deg 135deg,    /* Vermelho */
+                #f188c6 135deg 180deg,   /* Rosa */
+                #c39dff 180deg 225deg,   /* Roxo */
+                #89bbff 225deg 270deg,   /* Azul */
+                #7deba8 270deg 315deg,   /* Verde */
+                #b3f07a 315deg 360deg    /* Verde-limão */
+            );
+        }
+
+        /* Rótulos de texto na roleta */
+        .wheel-label {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            font-size: 11px;
+            font-weight: 800;
+            color: #333;
+            text-shadow: 0 0 2px white;
+            text-align: center;
+            padding-top: 20px; /* Empurra o texto para a borda */
+            text-transform: uppercase;
+        }
+        
+        /* Rotaciona cada rótulo para o centro do seu setor */
+        .wheel-label:nth-child(1) { transform: rotate(22.5deg); }
+        .wheel-label:nth-child(2) { transform: rotate(67.5deg); }
+        .wheel-label:nth-child(3) { transform: rotate(112.5deg); }
+        .wheel-label:nth-child(4) { transform: rotate(157.5deg); }
+        .wheel-label:nth-child(5) { transform: rotate(202.5deg); }
+        .wheel-label:nth-child(6) { transform: rotate(247.5deg); }
+        .wheel-label:nth-child(7) { transform: rotate(292.5deg); }
+        .wheel-label:nth-child(8) { transform: rotate(337.5deg); }
+
+        #spinBtn {
+            margin-top: 15px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 6px rgba(34,97,159,0.06);
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #spinBtn:disabled {
+            background: #ccc;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(34,97,159,0.04);
+            font-weight: 700;
+            color: var(--deep);
+            flex-grow: 1;
+            font-size: 0.95em;
+        }
+
+        /* --- CARTÃO DE PERGUNTA --- */
+        #questionCard {
+            display: none;
+            margin-top: 20px;
+            background: linear-gradient(180deg,#fff,#fffefc);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(34,97,159,0.06);
+            text-align: left;
+        }
+
+        .q-topic {
+            font-weight: 900;
+            color: var(--deep);
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--lavender);
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(180deg, #f7f7f9, #fff);
+            color: var(--deep);
+            box-shadow: 0 6px rgba(34,97,159,0.04);
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--lavender);
+        }
+
+        .choice-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .choice-btn.correct {
+            background: linear-gradient(180deg, #dff7e6, #d0ffd7);
+            border-color: #7be39b;
+            color: #0a5c33;
+        }
+
+        .choice-btn.wrong {
+            background: linear-gradient(180deg, #fff0f0, #ffecec);
+            border-color: #ff9b9b;
+            color: #8a1f1f;
+        }
+
+        #feedbackText {
+            margin-top: 15px;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #feedbackText.correct {
+            background-color: rgba(125, 227, 155, 0.2);
+            color: #0a5c33;
+        }
+        
+        #feedbackText.wrong {
+            background-color: rgba(255, 155, 155, 0.2);
+            color: #8a1f1f;
+        }
+        
+        #nextQuestionBtn {
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: var(--deep);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            width: 100%;
+            display: none;
+        }
+
+        /* --- POP-UP/MODAL DE FIM DE JOGO --- */
+        #endGameModal {
+            display: none; /* Começa oculto */
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: modal-fade-in 0.3s ease-out;
+        }
+
+        @keyframes modal-fade-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-emoji {
+            font-size: 5rem;
+            line-height: 1;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--deep);
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--pink);
+            margin-bottom: 25px;
+        }
+
+        #restartGameBtn {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 1.1em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            #startScreen { padding: 20px; }
+            #startScreen h1 { font-size: 2.2em; }
+            #startScreen .illustration { width: 100px; height: 100px; font-size: 48px; }
+            
+            .wheel-wrapper { width: 260px; height: 260px; }
+            .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 22px; top: -8px; }
+            .wheel-label { font-size: 9px; padding-top: 15px; }
+
+            .info-row { flex-direction: column; gap: 8px; }
+            .info-box { font-size: 0.9em; }
+
+            #questionCard { padding: 15px; }
+            .q-text { font-size: 1rem; }
+            .choice-btn { padding: 12px 14px; font-size: 0.95em; }
+            
+            .modal-content { padding: 25px 20px; }
+            .modal-emoji { font-size: 4rem; }
+            .modal-title { font-size: 1.6rem; }
+            .modal-message { font-size: 1rem; }
+            .modal-score { font-size: 1.2rem; }
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="flowers-row" aria-hidden="true">🌸 🌼 🌺 🌷 🌿 🌸 🌼</div>
+
+    <div id="startScreen">
+        <h1>Primeiro Grito</h1>
+        <div class="title-flowers" aria-hidden="true">🌷 • Parto Humanizado • 🌷</div>
+        <div class="subtitle">A Jornada do Parto Humanizado</div>
+        <div class="illustration">🤰</div>
+        
+        <div id="highScore">Pontuação Máxima: 0</div>
+        
+        <button id="startButton">Iniciar Jogo</button>
+    </div>
+
+    <div id="wheelApp" aria-hidden="true">
+        <div class="wheel-container" role="application" aria-label="Roleta de Perguntas">
+            <div class="wheel-header">Gire a Roleta do Conhecimento!</div>
+
+            <div class="wheel-wrapper">
+                <div class="pointer" aria-hidden="true"></div>
+                <div id="wheel" title="Roleta">
+                    <div class="wheel-label">Sinais</div>
+                    <div class="wheel-label">Direitos</div>
+                    <div class="wheel-label">Alívio da Dor</div>
+                    <div class="wheel-label">Apoio</div>
+                    <div class="wheel-label">Intervenções</div>
+                    <div class="wheel-label">Violência Obst.</div>
+                    <div class="wheel-label">O que Evitar</div>
+                    <div class="wheel-label">Ambiente</div>
+                </div>
+            </div>
+
+            <button id="spinBtn" aria-label="Girar roleta">Girar</button>
+
+            <div class="info-row">
+                <div class="info-box" id="scoreBox">Pontuação: 0</div>
+                <div class="info-box" id="askedBox">Respondidas: 0 / 10</div>
+                <div class="info-box" id="topicBox">Tópico: —</div>
+            </div>
+        </div>
+
+        <div id="questionCard" role="dialog" aria-modal="true">
+            <div class="q-topic" id="qTopic"></div>
+            <div class="q-text" id="qText"></div>
+            <div class="choices" id="choicesList"></div>
+            <div id="feedbackText"></div>
+            <button id="nextQuestionBtn">Próxima Rodada</button>
+        </div>
+    </div>
+
+    <div id="endGameModal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-emoji" id="finalEmoji"></span>
+            <h2 class="modal-title" id="finalTitle"></h2>
+            <p class="modal-message" id="finalMessage"></p>
+            <div class="modal-score">Pontuação Final: <span id="finalScore">0</span></div>
+            <button id="restartGameBtn">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <div class="flowers-row" aria-hidden="true" style="margin-top:14px">🌺 🌿 🌼 🌸 🌷 🌺</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- SELETORES DE ELEMENTOS ---
+            const startScreen = document.getElementById('startScreen');
+            const startButton = document.getElementById('startButton');
+            const highScoreEl = document.getElementById('highScore');
+            
+            const wheelApp = document.getElementById('wheelApp');
+            const wheel = document.getElementById('wheel');
+            const spinBtn = document.getElementById('spinBtn');
+            const scoreBox = document.getElementById('scoreBox');
+            const askedBox = document.getElementById('askedBox');
+            const topicBox = document.getElementById('topicBox');
+            
+            const qCard = document.getElementById('questionCard');
+            const qTopic = document.getElementById('qTopic');
+            const qText = document.getElementById('qText');
+            const choicesList = document.getElementById('choicesList');
+            const feedbackText = document.getElementById('feedbackText');
+            const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+
+            const endGameModal = document.getElementById('endGameModal');
+            const finalEmoji = document.getElementById('finalEmoji');
+            const finalTitle = document.getElementById('finalTitle');
+            const finalMessage = document.getElementById('finalMessage');
+            const finalScoreEl = document.getElementById('finalScore');
+            const restartGameBtn = document.getElementById('restartGameBtn');
+
+            // --- DADOS DO QUIZ (Baseado nas 24 perguntas do seu código) ---
+            const topics = [
+                { id: 'SINAIS E FASES', color: '#fde18a', questions: [
+                    { q: "Qual é o SINAL que indica que deve ir para a maternidade?", a: ["a) Barriga dura a cada 5 minutos por mais de 1 hora", "b) Azia", "c) Cansaço", "d) Sono"], correct: 0, feedback: "Correto! Contrações regulares e dolorosas são sinal de trabalho de parto ativo." },
+                    { q: "Quando a bolsa estoura, o que deve fazer?", a: ["a) Esperar em casa", "b) Ir para a maternidade mesmo sem contrações", "c) Tomar banho e dormir", "d) Só ir se tiver dor forte"], correct: 1, feedback: "Correto! Romper da bolsa exige avaliação, mesmo sem contrações, pelo risco de infecção." },
+                    { q: "O que é o \"tampão mucoso\"?", a: ["a) Um remédio", "b) Um tipo de corrimento grosso que pode sair antes do parto", "c) Um exame médico", "d) Uma vacina"], correct: 1, feedback: "Correto! É uma secreção espessa que pode sinalizar a proximidade do parto, mas não é o parto em si." },
+                    { q: "Na fase ativa do parto, as contrações são:", a: ["a) Sem dor", "b) Fortes e regulares", "c) Só de madrugada", "d) Apenas na barriga"], correct: 1, feedback: "Correto! Esse é o padrão da fase ativa, quando a dilatação progride mais rapidamente." },
+                    { q: "Antes de ir para o hospital (na fase inicial), é bom:", a: ["a) Tomar um banho e repousar", "b) Fazer exercício forte", "c) Comer muito", "d) Esperar sangrar muito"], correct: 0, feedback: "Correto! Tentar relaxar, tomar um banho morno e descansar é recomendado na fase latente." },
+                ]},
+                { id: 'DIREITOS (GERAL)', color: '#ffb671', questions: [
+                    { q: "Sobre suas escolhas no parto:", a: ["a) O médico decide tudo", "b) Você não tem opinião", "c) Podem ser respeitadas", "d) Só a família escolhe"], correct: 2, feedback: "Correto! Você é a protagonista. Suas preferências devem ser ouvidas e respeitadas." },
+                    { q: "Se não entender algo no parto:", a: ["a) Fique calada", "b) Peça explicações", "c) Assine tudo", "d) Aceite sem perguntar"], correct: 1, feedback: "Correto! Você tem direito a informação clara. Consentimento informado é lei." },
+                ]},
+                { id: 'ALÍVIO E POSIÇÕES', color: '#f77b7c', questions: [
+                    { q: "Para aliviar a dor no parto, pode:", a: ["a) Tomar banho quente", "b) Ficar parada na cama", "c) Evitar se mexer", "d) Tomar remédio por conta própria"], correct: 0, feedback: "Correto! O banho quente (imersão ou chuveiro) é um ótimo método não farmacológico de alívio." },
+                    { q: "Durante o parto, você pode:", a: ["a) Ficar em várias posições", "b) Só deitada de costas", "c) Apenas em pé", "d) Só sentada"], correct: 0, feedback: "Correto! A liberdade de movimento ajuda o bebê a descer e alivia a dor. Ficar só deitada não é recomendado." },
+                ]},
+                { id: 'APOIO (ACOMPANHANTE/DOULA)', color: '#f188c6', questions: [
+                    { q: "Por lei, você tem direito a:", a: ["a) Um acompanhante no parto", "b) Escolher o médico", "c) Comida grátis", "d) Quarto particular"], correct: 0, feedback: "Correto! A Lei Federal nº 11.108/2005 garante o direito a um acompanhante de sua escolha." },
+                    { q: "A doula é uma pessoa que:", a: ["a) Faz o parto", "b) Dá apoio físico e emocional", "c) Substitui o médico", "d) Aplica anestesia"], correct: 1, feedback: "Correto! A doula oferece suporte contínuo, mas não realiza procedimentos médicos." },
+                ]},
+                { id: 'INTERVENÇÕES (EPISIO/OCITOCINA)', color: '#c39dff', questions: [
+                    { q: "A episiotomia (corte na vagina):", a: ["a) É necessária para todas", "b) Só o médico decide", "c) Não é sempre necessária", "d) Não dói nada"], correct: 2, feedback: "Correto! A episiotomia não deve ser feita de rotina. Seu uso deve ser restrito a casos específicos." },
+                    { q: "O soro com ocitocina:", a: ["a) É dado para todas", "b) Pode aumentar a dor das contrações", "c) Não faz diferença", "d) É um calmante"], correct: 1, feedback: "Correto! A ocitocina sintética (soro) induz ou acelera contrações, que podem ser mais intensas. Não deve ser usada de rotina." },
+                ]},
+                { id: 'VIOLÊNCIA OBSTÉTRICA', color: '#89bbff', questions: [
+                    { q: "Violência obstétrica é:", a: ["a) Fazer procedimentos sem necessidade ou consentimento", "b) Seguir todos os protocolos", "c) Oferecer analgesia", "d) Respeitar sua vontade"], correct: 0, feedback: "Correto! Isso inclui procedimentos desnecessários, desrespeito, humilhação ou negligência." },
+                    { q: "Se sofrer violência, deve:", a: ["a) Calar e esquecer", "b) Procurar ajuda e denunciar", "c) Contar só para a família", "d) Esperar passar"], correct: 1, feedback: "Correto! Buscar apoio (Ouvidoria, Disque 180) e denunciar é fundamental." },
+                    { q: "Ficar presa na cama no parto:", a: ["a) É sempre necessário", "b) É um direito seu", "c) Pode ser violência (se imposto sem necessidade)", "d) Ajuda o médico"], correct: 2, feedback: "Correto! Restringir sua movimentação sem uma justificativa clínica clara é uma forma de violência." },
+                    { q: "Ser xingada ou humilhada no parto:", a: ["a) É normal", "b) É violência obstétrica", "c) Faz parte", "d) Não tem importância"], correct: 1, feedback: "Correto! Qualquer tipo de abuso verbal ou psicológico é inaceitável e configura violência." },
+                    { q: "Ser submetida a procedimentos sem consentimento:", a: ["a) É para seu bem", "b) É violência obstétrica", "c) É obrigatório", "d) Não tem problema"], correct: 1, feedback: "Correto! Você tem direito de ser informada e consentir (ou recusar) procedimentos." },
+                    { q: "Se sentir desrespeitada, você pode:", a: ["a) Reclamar depois", "b) Pedir ajuda e se posicionar na hora", "c) Aceitar calada", "d) Ignorar"], correct: 1, feedback: "Correto! Você tem o direito de exigir respeito e pedir ajuda, seja do seu acompanhante ou da equipe." },
+                ]},
+                { id: 'O QUE EVITAR', color: '#7deba8', questions: [
+                    { q: "Raspar os pelos íntimos (tricotomia) é:", a: ["a) Obrigatório", "b) Não é preciso (desnecessário)", "c) Só se quiser", "d) Apenas no hospital"], correct: 1, feedback: "Correto! Não é necessário e não traz benefícios, podendo até aumentar o risco de infecção." },
+                    { q: "Romper a bolsa artificialmente (amniotomia):", a: ["a) É bom para todas", "b) Deve ter indicação e pode aumentar risco de infecção", "c) Não tem risco", "d) É sempre necessário"], correct: 1, feedback: "Correto! Não deve ser feito de rotina, apenas com indicação clara." },
+                    { q: "Durante o trabalho de parto, você:", a: ["a) Não pode comer nada", "b) Pode beber líquidos e comer alimentos leves (geralmente)", "c) Só líquidos", "d) Só gelo"], correct: 1, feedback: "Correto! Jejum de rotina não é recomendado. Alimentação leve e líquidos costumam ser permitidos." },
+                    { q: "Lavagem intestinal (enema) no parto:", a: ["a) É obrigatória", "b) É desnecessária e incômoda", "c) Faz bem para o bebê", "d) Ajuda no parto"], correct: 1, feedback: "Correto! É uma prática desnecessária, não recomendada de rotina." },
+                ]},
+                { id: 'AMBIENTE', color: '#b3f07a', questions: [
+                    { q: "No hospital, você tem direito a:", a: ["a) Um ambiente tranquilo e respeitoso", "b) Sala com muita gente", "c) Luz forte sempre acesa", "d) Frio ou calor excessivo"], correct: 0, feedback: "Correto! Um ambiente calmo, com privacidade e pouca luz, ajuda na progressão do parto." },
+                ]}
+            ];
+
+            // --- MENSAGENS DE FIM DE JOGO (por faixa de 10 pontos) ---
+            const expressions = {
+                0:  { emoji: '😔', title: 'Oh, não...', message: 'Sua pontuação foi baixa. Muitas práticas mostradas são violência obstétrica. Continue estudando para se fortalecer!' },
+                10: { emoji: '🤔', title: 'Quase lá', message: 'Você acertou uma! Informação é poder. Cada direito que você aprende é um passo para um parto respeitoso.' },
+                20: { emoji: '🧐', title: 'Aprendendo', message: 'Duas corretas! Você está começando a identificar seus direitos. Não desista de buscar informação!' },
+                30: { emoji: '📚', title: 'Bom começo!', message: 'Você está no caminho certo! Conhecer seus direitos e as boas práticas faz toda a diferença. Continue assim!' },
+                40: { emoji: '💡', title: 'Bom trabalho!', message: 'Você já sabe bastante! Continue se informando para garantir que sua experiência seja a mais positiva possível.' },
+                50: { emoji: '💪', title: 'Metade do caminho!', message: 'Excelente! Você está bem informada sobre o parto humanizado e como evitar intervenções desnecessárias.' },
+                60: { emoji: '👍', title: 'Muito bem!', message: 'Ótima pontuação! Você demonstrou um bom conhecimento sobre seus direitos e as fases do parto.' },
+                70: { emoji: '✨', title: 'Ótimo!', message: 'Você está muito bem preparada! Seu conhecimento é sua maior ferramenta para um parto respeitoso e protagonista.' },
+                80: { emoji: '🌟', title: 'Excelente!', message: 'Parabéns! Você demonstrou grande conhecimento. Você está pronta para ser a protagonista do seu parto!' },
+                90: { emoji: '🏆', title: 'Incrível!', message: 'Pontuação quase perfeita! Você é uma expert em parto humanizado e direitos da gestante. Arrasou!' },
+                100:{ emoji: '👑', title: 'Perfeito!', message: 'Pontuação máxima! Você domina o assunto. Seu "Primeiro Grito" será de força e protagonismo! Parabéns!' },
+            };
+
+            // --- ESTADO DO JOGO ---
+            let score = 0;
+            let totalAsked = 0;
+            const maxQuestions = 10;
+            let spinning = false;
+            let usedQuestions = new Set();
+            let currentQuestion = null;
+            
+            // --- FUNÇÕES DO JOGO ---
+
+            // Carrega a pontuação máxima do localStorage
+            function loadHighScore() {
+                const maxScore = localStorage.getItem('primeiroGritoMaxScore') || 0;
+                highScoreEl.textContent = `Pontuação Máxima: ${maxScore}`;
+            }
+
+            // Reseta e inicia o jogo
+            function startGame() {
+                score = 0;
+                totalAsked = 0;
+                usedQuestions.clear();
+                spinning = false;
+                updateInfo();
+                
+                // Reseta a roleta visualmente
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+                // Força o re-layout para a próxima transição funcionar
+                wheel.offsetHeight; 
+                wheel.style.transition = 'transform 5s cubic-bezier(0.25, 1, 0.5, 1)';
+
+                startScreen.style.display = 'none';
+                wheelApp.style.display = 'block';
+                wheelApp.setAttribute('aria-hidden', 'false');
+                qCard.style.display = 'none';
+                endGameModal.style.display = 'none';
+            }
+
+            // Atualiza os placares
+            function updateInfo() {
+                scoreBox.textContent = `Pontuação: ${score}`;
+                askedBox.textContent = `Respondidas: ${totalAsked} / ${maxQuestions}`;
+            }
+
+            // Gira a roleta
+            function spinWheel() {
+                if (spinning) return;
+                
+                spinning = true;
+                spinBtn.disabled = true;
+                qCard.style.display = 'none';
+                topicBox.textContent = `Tópico: Girando...`;
+
+                const n = topics.length; // 8 tópicos
+                const sectorAngle = 360 / n; // 45 graus
+                
+                // Escolhe um setor aleatório (0 a 7)
+                const targetSector = Math.floor(Math.random() * n);
+                
+                // Calcula a rotação final
+                // Múltiplas voltas (3 a 5)
+                const randomSpins = (Math.floor(Math.random() * 3) + 3) * 360;
+                // Posição central do setor (pino está no topo, a 0/360 graus)
+                // O centro do setor 0 é 22.5. O centro do setor 1 é 67.5.
+                // Queremos que o pino (0) aponte para o centro do setor.
+                // A rotação deve ser -(targetSector * sectorAngle + sectorAngle / 2)
+                const targetRotation = -(targetSector * sectorAngle + (sectorAngle / 2));
+                // Adiciona uma variação aleatória dentro do setor
+                const jitter = (Math.random() - 0.5) * (sectorAngle * 0.8);
+
+                const finalDeg = randomSpins + targetRotation + jitter;
+
+                wheel.style.transform = `rotate(${finalDeg}deg)`;
+
+                // Após a animação
+                setTimeout(() => {
+                    spinning = false;
+                    const topic = topics[targetSector];
+                    topicBox.textContent = `Tópico: ${topic.id}`;
+                    
+                    // Seleciona uma pergunta do tópico
+                    const q = pickQuestionFromTopic(topic);
+                    if (!q) {
+                        // Se esgotou as perguntas desse tópico, tenta qualquer outra
+                        const alt = pickAnyRemainingQuestion();
+                        if (!alt) {
+                            // Acabaram todas as perguntas
+                            finishGame();
+                        } else {
+                            presentQuestion(alt.topic, alt.qObj);
+                        }
+                    } else {
+                        presentQuestion(topic, q);
+                    }
+                }, 5100); // 100ms após a transição de 5s
+            }
+
+            // Escolhe uma pergunta não usada do tópico
+            function pickQuestionFromTopic(topic) {
+                const availableQuestions = [];
+                topic.questions.forEach((q, i) => {
+                    const key = topic.id + '::' + i;
+                    if (!usedQuestions.has(key)) {
+                        availableQuestions.push({ qObj: q, key: key });
+                    }
+                });
+
+                if (availableQuestions.length === 0) return null;
+
+                const pick = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+                usedQuestions.add(pick.key);
+                return pick.qObj;
+            }
+
+            // Escolhe qualquer pergunta restante de qualquer tópico
+            function pickAnyRemainingQuestion() {
+                for (let t of topics) {
+                    const q = pickQuestionFromTopic(t);
+                    if (q) return { topic: t, qObj: q };
+                }
+                return null;
+            }
+
+            // Mostra a pergunta no cartão
+            function presentQuestion(topic, qObj) {
+                currentQuestion = qObj;
+                qTopic.textContent = topic.id;
+                qText.textContent = qObj.q;
+                choicesList.innerHTML = '';
+                feedbackText.style.display = 'none';
+                nextQuestionBtn.style.display = 'none';
+
+                qObj.a.forEach((answer, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
+                    button.textContent = answer;
+                    button.onclick = () => handleAnswer(index, button);
+                    choicesList.appendChild(button);
+                });
+
+                qCard.style.display = 'block';
+            }
+
+            // Processa a resposta do usuário
+            function handleAnswer(chosenIndex, btn) {
+                // Desabilita todos os botões
+                Array.from(choicesList.children).forEach(b => b.disabled = true);
+
+                const correct = (chosenIndex === currentQuestion.correct);
+
+                if (correct) {
+                    score += 10;
+                    btn.classList.add('correct');
+                    feedbackText.textContent = currentQuestion.feedback;
+                    feedbackText.className = 'correct';
+                } else {
+                    // Penalidade de -5, mas sem ficar negativo
+                    score = Math.max(0, score - 5); 
+                    btn.classList.add('wrong');
+                    // Marca a correta
+                    choicesList.children[currentQuestion.correct].classList.add('correct');
+                    feedbackText.textContent = `Incorreto. A resposta certa é: ${currentQuestion.a[currentQuestion.correct]}`;
+                    feedbackText.className = 'wrong';
+                }
+
+                totalAsked++;
+                updateInfo();
+                feedbackText.style.display = 'block';
+                nextQuestionBtn.style.display = 'block';
+            }
+
+            // Lógica do botão "Próxima Rodada"
+            function handleNextQuestion() {
+                if (totalAsked >= maxQuestions) {
+                    finishGame();
+                } else {
+                    qCard.style.display = 'none';
+                    spinBtn.disabled = false;
+                }
+            }
+
+            // Finaliza o jogo e mostra o modal
+            function finishGame() {
+                qCard.style.display = 'none';
+                wheelApp.style.display = 'none';
+                wheelApp.setAttribute('aria-hidden', 'true');
+                
+                // Salva a pontuação máxima
+                const oldMax = localStorage.getItem('primeiroGritoMaxScore') || 0;
+                if (score > oldMax) {
+                    localStorage.setItem('primeiroGritoMaxScore', score);
+                }
+
+                // Calcula a faixa de pontuação (arredonda para baixo para a dezena mais próxima)
+                const scoreBracket = Math.max(0, Math.floor(score / 10) * 10);
+                const expr = expressions[scoreBracket];
+
+                // Preenche o modal
+                finalEmoji.textContent = expr.emoji;
+                finalTitle.textContent = expr.title;
+                finalMessage.textContent = expr.message;
+                finalScoreEl.textContent = score;
+
+                // Exibe o modal
+                endGameModal.style.display = 'flex';
+            }
+
+            // Reinicia o jogo a partir do modal
+            function restartGame() {
+                endGameModal.style.display = 'none';
+                startScreen.style.display = 'block';
+                loadHighScore(); // Atualiza a pontuação máxima na tela inicial
+            }
+
+            // --- GERAÇÃO DE PÉTALAS (do seu código) ---
+            (function createPetals() {
+                const petals = ['🌸','🌺','🌷','🍃','🌼'];
+                const count = 10;
+                for(let i=0; i<count; i++){
+                    const s = document.createElement('div');
+                    s.className = 'petal';
+                    s.style.left = Math.random() * 100 + 'vw';
+                    s.style.top = (-10 - Math.random() * 10) + 'vh';
+                    s.style.fontSize = (14 + Math.random() * 28) + 'px';
+                    s.style.animationDuration = (8 + Math.random() * 10) + 's';
+                    s.style.animationDelay = (Math.random() * 6) + 's';
+                    s.textContent = petals[Math.floor(Math.random() * petals.length)];
+                    document.body.appendChild(s);
+                }
+            })();
+
+            // --- EVENT LISTENERS INICIAIS ---
+            loadHighScore();
+            startButton.onclick = startGame;
+            spinBtn.onclick = spinWheel;
+            nextQuestionBtn.onclick = handleNextQuestion;
+            restartGameBtn.onclick = restartGame;
+        });
+    </script>
+</body>
+</html>
