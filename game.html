@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiro Choro - A Jornada do Parto Humanizado</title>
+    <style>
+        /* --- GERAL --- */
+        :root {
+            --pink: #FF4D94;
+            --lavender: #B366FF;
+            --mint: #4DFF9E;
+            --deep: #1A75FF;
+            --white: #FFFFFF;
+            --text-dark: #2c3e50;
+            --bg-light: linear-gradient(180deg, #fff8fb 0%, #f4fff8 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 12px;
+            color: var(--deep);
+        }
+
+        /* --- DECORAÇÃO DE PÉTALAS --- */
+        .flowers-row {
+            font-size: 24px;
+            line-height: 1;
+            pointer-events: none;
+            opacity: .8;
+            margin: 10px 0;
+            user-select: none;
+        }
+
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            font-size: 18px;
+            opacity: 0.9;
+            will-change: transform, opacity;
+            animation: floatPetal linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes floatPetal {
+            from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0.15; }
+        }
+
+        /* --- TELA INICIAL --- */
+        #startScreen {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+            border-radius: 24px;
+            padding: 26px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            border: 6px solid transparent;
+            background-image:
+                linear-gradient(white, white),
+                radial-gradient(closest-side, rgba(255,77,148,0.25), rgba(179,102,255,0.08));
+            background-origin: padding-box, border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        /* Brilho suave da borda */
+        #startScreen::after {
+            content: "";
+            position: absolute;
+            inset: -6px;
+            z-index: -1;
+            border-radius: 28px;
+            background: conic-gradient(from 180deg at 50% 50%, #FFD6EB, #FEE7C6, #E9FDEB, #EDE6FF, #FFD6EB);
+            filter: blur(8px);
+            opacity: 0.45;
+        }
+
+        #startScreen h1 {
+            color: var(--pink);
+            font-size: 2.8em;
+            margin: 10px 0 6px;
+            text-shadow: 1px 1px 0 rgba(26,117,255,0.06);
+        }
+
+        #startScreen .subtitle {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--deep);
+            margin: 0 0 12px;
+            border-bottom: 2px dashed rgba(255,77,148,0.25);
+            padding-bottom: 10px;
+        }
+        
+        #startScreen .title-flowers {
+            font-size: 18px;
+            letter-spacing: 6px;
+            color: rgba(255,77,148,0.95);
+            user-select: none;
+        }
+
+        #startScreen .illustration {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            border: 6px solid rgba(255,77,148,0.12);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff8fb, #f5fffb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 56px;
+            line-height: 1;
+            box-shadow: 0 6px 18px rgba(26,117,255,0.08);
+        }
+        
+        #highScore {
+            font-size: 1.2em;
+            font-weight: 800;
+            color: var(--deep);
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(179, 102, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        #startButton {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 1.2em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            box-shadow: 0 6px rgba(26,117,255,0.08);
+            width: 100%;
+            max-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        #startButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- JOGO DA ROLETA --- */
+        #wheelApp {
+            display: none; /* Começa oculto */
+            width: 100%;
+            max-width: 900px;
+            margin-top: 20px;
+        }
+
+        .wheel-container {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), #fff);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(26,117,255,0.08);
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .wheel-header {
+            font-size: 1.4rem;
+            color: var(--pink);
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        /* Wrapper para centralizar a roleta e o pino */
+        .wheel-wrapper {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Pino (Pointer) */
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 24px solid transparent;
+            border-right: 24px solid transparent;
+            border-top: 36px solid var(--deep);
+            position: absolute;
+            top: -15px; /* Acima da roleta */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            filter: drop-shadow(0 -2px 2px rgba(0,0,0,0.15));
+        }
+
+        /* A ROLETA (com CSS Conic Gradient) - 4 cores como na imagem */
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 10px solid var(--white);
+            box-shadow: 0 0 25px rgba(0,0,0,0.15), inset 0 0 20px rgba(0,0,0,0.1);
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+            will-change: transform;
+            /* Gradiente de 4 cores mais vivas */
+            background: conic-gradient(
+                #FF4D94 0deg 90deg,     /* Rosa - SITUAÇÃO REAL */
+                #B366FF 90deg 180deg,   /* Roxo - FASES DO PARTO */
+                #4DFF9E 180deg 270deg,  /* Verde - MITOS E VERDADES */
+                #1A75FF 270deg 360deg   /* Azul - DIREITOS DA MULHER */
+            );
+        }
+
+        /* Elemento decorativo central */
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--deep);
+        }
+
+        #spinBtn {
+            margin-top: 15px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 6px rgba(26,117,255,0.06);
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        #spinBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #spinBtn:disabled {
+            background: #ccc;
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 6px rgba(26,117,255,0.06);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(26,117,255,0.04);
+            font-weight: 700;
+            color: var(--deep);
+            flex-grow: 1;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* --- CARTÃO DE PERGUNTA --- */
+        #questionCard {
+            display: none;
+            margin-top: 20px;
+            background: linear-gradient(180deg,#fff,#fffefc);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(26,117,255,0.06);
+            text-align: left;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .q-topic {
+            font-weight: 900;
+            color: var(--deep);
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--lavender);
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(180deg, #f7f7f9, #fff);
+            color: var(--deep);
+            box-shadow: 0 6px rgba(26,117,255,0.04);
+            text-align: left;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--lavender);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+        }
+
+        .choice-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .choice-btn.correct {
+            background: linear-gradient(180deg, #dff7e6, #d0ffd7);
+            border-color: #7be39b;
+            color: #0a5c33;
+        }
+
+        .choice-btn.wrong {
+            background: linear-gradient(180deg, #fff0f0, #ffecec);
+            border-color: #ff9b9b;
+            color: #8a1f1f;
+        }
+
+        #feedbackText {
+            margin-top: 15px;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #feedbackText.correct {
+            background-color: rgba(125, 227, 155, 0.2);
+            color: #0a5c33;
+        }
+        
+        #feedbackText.wrong {
+            background-color: rgba(255, 155, 155, 0.2);
+            color: #8a1f1f;
+        }
+        
+        #nextQuestionBtn {
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: var(--deep);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            width: 100%;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        #nextQuestionBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- POP-UP/MODAL DE FIM DE JOGO --- */
+        #endGameModal {
+            display: none; /* Começa oculto */
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: modal-fade-in 0.3s ease-out;
+        }
+
+        @keyframes modal-fade-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-emoji {
+            font-size: 5rem;
+            line-height: 1;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--deep);
+            margin-bottom: 10px;
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--pink);
+            margin-bottom: 25px;
+        }
+
+        #restartGameBtn {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 1.1em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--pink), var(--lavender));
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        #restartGameBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 768px) {
+            .wheel-wrapper {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .wheel-center {
+                width: 60px;
+                height: 60px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            #startScreen { padding: 20px; }
+            #startScreen h1 { font-size: 2.2em; }
+            #startScreen .illustration { width: 100px; height: 100px; font-size: 48px; }
+            
+            .wheel-wrapper { 
+                width: 300px; 
+                height: 300px; 
+            }
+            .pointer { 
+                border-left-width: 18px; 
+                border-right-width: 18px; 
+                border-top-width: 28px; 
+                top: -12px; 
+            }
+            
+            .wheel-center {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+            }
+
+            .info-row { flex-direction: column; gap: 8px; }
+            .info-box { font-size: 0.9em; }
+
+            #questionCard { padding: 15px; }
+            .q-text { font-size: 1rem; }
+            .choice-btn { padding: 12px 14px; font-size: 0.95em; }
+            
+            .modal-content { padding: 25px 20px; }
+            .modal-emoji { font-size: 4rem; }
+            .modal-title { font-size: 1.6rem; }
+            .modal-message { font-size: 1rem; }
+            .modal-score { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 400px) {
+            .wheel-wrapper { 
+                width: 280px; 
+                height: 280px; 
+            }
+            
+            #startScreen h1 { font-size: 1.8em; }
+            .wheel-header { font-size: 1.2rem; }
+        }
+
+        /* Melhorias para toque em dispositivos móveis */
+        @media (hover: none) {
+            button:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .choice-btn:hover {
+                transform: none;
+                box-shadow: 0 6px rgba(26,117,255,0.04);
+            }
+            
+            .info-box:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="flowers-row" aria-hidden="true">🌸 🌼 🌺 🌷 🌿 🌸 🌼</div>
+
+    <div id="startScreen">
+        <h1>Primeiro Choro</h1>
+        <div class="title-flowers" aria-hidden="true">🌷 • Parto Humanizado • 🌷</div>
+        <div class="subtitle">A Jornada do Parto Humanizado</div>
+        <div class="illustration">🤰</div>
+        
+        <div id="highScore">Pontuação Máxima: 0</div>
+        
+        <button id="startButton">Iniciar Jogo</button>
+    </div>
+
+    <div id="wheelApp" aria-hidden="true">
+        <div class="wheel-container" role="application" aria-label="Roleta de Perguntas">
+            <div class="wheel-header">Gire a Roleta do Conhecimento!</div>
+
+            <div class="wheel-wrapper">
+                <div class="pointer" aria-hidden="true"></div>
+                <div id="wheel" title="Roleta">
+                    <!-- Apenas as cores, sem ícones ou textos -->
+                </div>
+                <div class="wheel-center">🎯</div>
+            </div>
+
+            <button id="spinBtn" aria-label="Girar roleta">Girar</button>
+
+            <div class="info-row">
+                <div class="info-box" id="scoreBox">Pontuação: 0</div>
+                <div class="info-box" id="askedBox">Respondidas: 0 / 10</div>
+                <div class="info-box" id="topicBox">Tópico: —</div>
+            </div>
+        </div>
+
+        <div id="questionCard" role="dialog" aria-modal="true">
+            <div class="q-topic" id="qTopic"></div>
+            <div class="q-text" id="qText"></div>
+            <div class="choices" id="choicesList"></div>
+            <div id="feedbackText"></div>
+            <button id="nextQuestionBtn">Próxima Rodada</button>
+        </div>
+    </div>
+
+    <div id="endGameModal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-emoji" id="finalEmoji"></span>
+            <h2 class="modal-title" id="finalTitle"></h2>
+            <p class="modal-message" id="finalMessage"></p>
+            <div class="modal-score">Pontuação Final: <span id="finalScore">0</span></div>
+            <button id="restartGameBtn">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <div class="flowers-row" aria-hidden="true" style="margin-top:14px">🌺 🌿 🌼 🌸 🌷 🌺</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- SELETORES DE ELEMENTOS ---
+            const startScreen = document.getElementById('startScreen');
+            const startButton = document.getElementById('startButton');
+            const highScoreEl = document.getElementById('highScore');
+            
+            const wheelApp = document.getElementById('wheelApp');
+            const wheel = document.getElementById('wheel');
+            const spinBtn = document.getElementById('spinBtn');
+            const scoreBox = document.getElementById('scoreBox');
+            const askedBox = document.getElementById('askedBox');
+            const topicBox = document.getElementById('topicBox');
+            
+            const qCard = document.getElementById('questionCard');
+            const qTopic = document.getElementById('qTopic');
+            const qText = document.getElementById('qText');
+            const choicesList = document.getElementById('choicesList');
+            const feedbackText = document.getElementById('feedbackText');
+            const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+
+            const endGameModal = document.getElementById('endGameModal');
+            const finalEmoji = document.getElementById('finalEmoji');
+            const finalTitle = document.getElementById('finalTitle');
+            const finalMessage = document.getElementById('finalMessage');
+            const finalScoreEl = document.getElementById('finalScore');
+            const restartGameBtn = document.getElementById('restartGameBtn');
+
+            // --- DADOS DO QUIZ (Com as novas perguntas) ---
+            const topics = [
+                { id: 'SITUAÇÃO REAL', icon: '🔍', color: '#FF4D94', questions: [
+                    { q: "Na fase inicial do trabalho de parto (fase latente), o que é recomendado fazer?", a: ["a) Correr para o hospital", "b) Ficar em casa, descansar e se hidratar", "c) Tomar remédio para dor", "d) Fazer exercício forte"], correct: 1, feedback: "Correto! Na fase latente, é recomendado ficar em casa, descansar e se hidratar, enquanto as contrações se tornam mais regulares." },
+                    { q: "Quando a gestante deve ir para a maternidade?", a: ["a) Na primeira contração", "b) Na fase ativa, com contrações fortes e regulares", "c) Só quando o médico ligar", "d) Após 12 horas de contrações"], correct: 1, feedback: "Correto! O momento ideal para ir ao hospital é na fase ativa do trabalho de parto, com contrações fortes e regulares." },
+                    { q: "No período expulsivo, a mulher sente:", a: ["a) Vontade de empurrar", "b) Muito sono", "c) Nada", "d) Coceira"], correct: 0, feedback: "Correto! No período expulsivo, a mulher sente uma vontade involuntária de empurrar, como se fosse fazer força para evacuar." },
+                    { q: "O que é o 'delivramento'?", a: ["a) A saída da placenta", "b) O nascimento do bebê", "c) A aplicação de anestesia", "d) Os pontos no períneo"], correct: 0, feedback: "Correto! O delivramento é a terceira fase do parto, quando ocorre a saída da placenta." },
+                    { q: "Perder o tampão mucoso é:", a: ["a) Perder líquido amniótico", "b) Uma secreção gelatinosa, às vezes com sangue", "c) Sinal de hemorragia", "d) Contração forte"], correct: 1, feedback: "Correto! O tampão mucoso é uma secreção gelatinosa que pode ter estrias de sangue, indicando que o colo do útero está se preparando para o parto." }
+                ]},
+                { id: 'FASES DO PARTO', icon: '⏱️', color: '#B366FF', questions: [
+                    { q: "O que é a 'fase ativa' do trabalho de parto?", a: ["a) Quando a dilatação vai de 5 cm até 10 cm", "b) Quando a placenta sai", "c) Quando a bolsa rompe", "d) Quando a mulher quer empurrar"], correct: 0, feedback: "Correto! A fase ativa ocorre quando o colo do útero está entre 5 e 10 cm de dilatação, com contrações mais intensas e frequentes." },
+                    { q: "Contrações na fase ativa são:", a: ["a) Fracas e irregulares", "b) Fortes, longas e regulares", "c) Rápidas e sem dor", "d) Apenas na barriga"], correct: 1, feedback: "Correto! Na fase ativa, as contrações são fortes, duram mais tempo (cerca de 45-60 segundos) e ocorrem em intervalos regulares (a cada 3-5 minutos)." },
+                    { q: "A fase latente pode durar:", a: ["a) Minutos", "b) Horas ou dias", "c) Apenas 1 hora", "d) Não tem duração definida"], correct: 1, feedback: "Correto! A fase latente pode durar horas ou até dias, especialmente em primíparas (primeira gestação)." },
+                    { q: "Na fase ativa, a mulher pode usar quais técnicas para alívio da dor?", a: ["a) Caminhar, dançar, banho e massagem", "b) Ficar parada na cama", "c) Gritar muito", "d) Tomar remédio por conta própria"], correct: 0, feedback: "Correto! Técnicas não farmacológicas como caminhar, dançar suavemente, banho morno e massagem podem ajudar no alívio da dor durante a fase ativa." },
+                    { q: "Quem decide a melhor posição para o parto?", a: ["a) A equipe médica", "b) A mulher", "c) O acompanhante", "d) O médico"], correct: 1, feedback: "Correto! A mulher é a protagonista do seu parto e deve poder escolher a posição que lhe for mais confortável para parir." }
+                ]},
+                { id: 'MITOS E VERDADES', icon: '💡', color: '#4DFF9E', questions: [
+                    { q: "A episiotomia (corte no períneo) de rotina é:", a: ["a) Obrigatória", "b) Uma violência obstétrica", "c) Recomendada sempre", "d) Indolor"], correct: 1, feedback: "Correto! A episiotomia de rotina é considerada uma violência obstétrica, pois não traz benefícios e pode causar complicações." },
+                    { q: "A manobra de Kristeller (empurrar a barriga) é:", a: ["a) Uma técnica segura", "b) Um direito da gestante", "c) Violência obstétrica", "d) Aconselhável"], correct: 2, feedback: "Correto! A manobra de Kristeller é considerada violência obstétrica, pois pode causar graves complicações para a mãe e o bebê." },
+                    { q: "A raspagem dos pelos e o enema (lavagem intestinal) são:", a: ["a) Obrigatórios", "b) Direitos da mulher", "c) Procedimentos de rotina", "d) Violência obstétrica se feitos sem consentimento"], correct: 3, feedback: "Correto! Esses procedimentos não são mais recomendados de rotina e, se realizados sem consentimento, configuram violência obstétrica." },
+                    { q: "A gestante pode escolher a posição para parir?", a: ["a) Sim, a que achar mais confortável", "b) Não, tem que ser deitada", "c) Só com autorização do médico", "d) Apenas se for cesárea"], correct: 0, feedback: "Correto! A mulher tem o direito de escolher a posição que achar mais confortável para o parto, desde que não haja contraindicação médica." },
+                    { q: "O contato pele a pele após o parto ajuda:", a: ["a) Só o bebê a dormir", "b) Na prevenção de hemorragias e no vínculo", "c) A mãe a descansar", "d) No crescimento do cabelo do bebê"], correct: 1, feedback: "Correto! O contato pele a pele ajuda a prevenir hemorragias pós-parto, regula a temperatura do bebê e fortalece o vínculo mãe-bebê." }
+                ]},
+                { id: 'DIREITOS DA MULHER', icon: '⚖️', color: '#1A75FF', questions: [
+                    { q: "A mulher tem direito a:", a: ["a) Um acompanhante de sua escolha", "b) Ficar sozinha no parto", "c) Não ver o bebê nascer", "d) Não ser informada sobre o parto"], correct: 0, feedback: "Correto! Por lei, a mulher tem direito a um acompanhante de sua escolha durante todo o trabalho de parto, parto e pós-parto." },
+                    { q: "Ter um acompanhante no parto é:", a: ["a) Proibido", "b) Um direito garantido por lei", "c) Permitido apenas em cesárea", "d) Opcional, se o hospital deixar"], correct: 1, feedback: "Correto! A Lei do Acompanhante (Lei nº 11.108/2005) garante à gestante o direito a um acompanhante durante todo o trabalho de parto, parto e pós-parto." },
+                    { q: "O que ajuda a prevenir hemorragias depois do parto?", a: ["a) Dormir logo", "b) Amamentar e contato pele a pele", "c) Beber chá", "d) Fazer exercício"], correct: 1, feedback: "Correto! A amamentação e o contato pele a pele estimulam a liberação de ocitocina, que ajuda na contração uterina e previne hemorragias." },
+                    { q: "Qual medicamento é dado para evitar hemorragia após o parto?", a: ["a) Ocitocina", "b) Paracetamol", "c) Dipirona", "d) Soro"], correct: 0, feedback: "Correto! A ocitocina é o medicamento mais utilizado para prevenir hemorragias pós-parto, pois promove a contração uterina." },
+                    { q: "Após o parto, é importante:", a: ["a) Separar o bebê da mãe", "b) Fazer contato pele a pele e amamentar", "c) Dar só mamadeira", "d) Deixar o bebê no berço"], correct: 1, feedback: "Correto! O contato pele a pele imediato e a amamentação na primeira hora são práticas recomendadas pela OMS para promover o vínculo e a saúde de mãe e bebê." }
+                ]}
+            ];
+
+            // --- MENSAGENS DE FIM DE JOGO (por faixa de 10 pontos) ---
+            const expressions = {
+                0:  { emoji: '😔', title: 'Oh, não...', message: 'Sua pontuação foi baixa. Muitas práticas mostradas são violência obstétrica. Continue estudando para se fortalecer!' },
+                10: { emoji: '🤔', title: 'Quase lá', message: 'Você acertou uma! Informação é poder. Cada direito que você aprende é um passo para um parto respeitoso.' },
+                20: { emoji: '🧐', title: 'Aprendendo', message: 'Duas corretas! Você está começando a identificar seus direitos. Não desista de buscar informação!' },
+                30: { emoji: '📚', title: 'Bom começo!', message: 'Você está no caminho certo! Conhecer seus direitos e as boas práticas faz toda a diferença. Continue assim!' },
+                40: { emoji: '💡', title: 'Bom trabalho!', message: 'Você já sabe bastante! Continue se informando para garantir que sua experiência seja a mais positiva possível.' },
+                50: { emoji: '💪', title: 'Metade do caminho!', message: 'Excelente! Você está bem informada sobre o parto humanizado e como evitar intervenções desnecessárias.' },
+                60: { emoji: '👍', title: 'Muito bem!', message: 'Ótima pontuação! Você demonstrou um bom conhecimento sobre seus direitos e as fases do parto.' },
+                70: { emoji: '✨', title: 'Ótimo!', message: 'Você está muito bem preparada! Seu conhecimento é sua maior ferramenta para um parto respeitoso e protagonista.' },
+                80: { emoji: '🌟', title: 'Excelente!', message: 'Parabéns! Você demonstrou grande conhecimento. Você está pronta para ser a protagonista do seu parto!' },
+                90: { emoji: '🏆', title: 'Incrível!', message: 'Pontuação quase perfeita! Você é uma expert em parto humanizado e direitos da gestante. Arrasou!' },
+                100:{ emoji: '👑', title: 'Perfeito!', message: 'Pontuação máxima! Você domina o assunto. Seu "Primeiro Choro" será de força e protagonismo! Parabéns!' },
+            };
+
+            // --- ESTADO DO JOGO ---
+            let score = 0;
+            let totalAsked = 0;
+            const maxQuestions = 10;
+            let spinning = false;
+            let usedQuestions = new Set();
+            let currentQuestion = null;
+            
+            // --- FUNÇÕES DO JOGO ---
+
+            // Carrega a pontuação máxima do localStorage
+            function loadHighScore() {
+                const maxScore = localStorage.getItem('primeiroChoroMaxScore') || 0;
+                highScoreEl.textContent = `Pontuação Máxima: ${maxScore}`;
+            }
+
+            // Reseta e inicia o jogo
+            function startGame() {
+                score = 0;
+                totalAsked = 0;
+                usedQuestions.clear();
+                spinning = false;
+                updateInfo();
+                
+                // Reseta a roleta visualmente
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+                // Força o re-layout para a próxima transição funcionar
+                wheel.offsetHeight; 
+                wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
+
+                startScreen.style.display = 'none';
+                wheelApp.style.display = 'block';
+                wheelApp.setAttribute('aria-hidden', 'false');
+                qCard.style.display = 'none';
+                endGameModal.style.display = 'none';
+                
+                // Adiciona vibração sutil no início (apenas para dispositivos móveis)
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(100);
+                }
+            }
+
+            // Atualiza os placares
+            function updateInfo() {
+                scoreBox.textContent = `Pontuação: ${score}`;
+                askedBox.textContent = `Respondidas: ${totalAsked} / ${maxQuestions}`;
+            }
+
+            // Gira a roleta
+            function spinWheel() {
+                if (spinning) return;
+                
+                spinning = true;
+                spinBtn.disabled = true;
+                qCard.style.display = 'none';
+                topicBox.textContent = `Tópico: Girando...`;
+
+                const n = topics.length; // 4 tópicos
+                const sectorAngle = 360 / n; // 90 graus
+                
+                // Escolhe um setor aleatório (0 a 3)
+                const targetSector = Math.floor(Math.random() * n);
+                
+                // Calcula a rotação final
+                // Mínimo de 2 voltas completas (720 graus) + até 3 voltas extras
+                const minSpins = 720; // 2 voltas completas
+                const extraSpins = Math.floor(Math.random() * 3) * 360; // 0 a 2 voltas extras
+                const randomSpins = minSpins + extraSpins;
+                
+                // Posição central do setor (pino está no topo, a 0/360 graus)
+                // O centro do setor 0 é 45. O centro do setor 1 é 135.
+                // Queremos que o pino (0) aponte para o centro do setor.
+                // A rotação deve ser -(targetSector * sectorAngle + sectorAngle / 2)
+                const targetRotation = -(targetSector * sectorAngle + (sectorAngle / 2));
+                // Adiciona uma variação aleatória dentro do setor
+                const jitter = (Math.random() - 0.5) * (sectorAngle * 0.8);
+
+                const finalDeg = randomSpins + targetRotation + jitter;
+
+                wheel.style.transform = `rotate(${finalDeg}deg)`;
+
+                // Adiciona vibração durante o giro (apenas para dispositivos móveis)
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100, 50, 100]);
+                }
+
+                // Após a animação
+                setTimeout(() => {
+                    spinning = false;
+                    const topic = topics[targetSector];
+                    topicBox.textContent = `Tópico: ${topic.id}`;
+                    
+                    // Seleciona uma pergunta do tópico
+                    const q = pickQuestionFromTopic(topic);
+                    if (!q) {
+                        // Se esgotou as perguntas desse tópico, tenta qualquer outra
+                        const alt = pickAnyRemainingQuestion();
+                        if (!alt) {
+                            // Acabaram todas as perguntas
+                            finishGame();
+                        } else {
+                            presentQuestion(alt.topic, alt.qObj);
+                        }
+                    } else {
+                        presentQuestion(topic, q);
+                    }
+                }, 4100); // 100ms após a transição de 4s
+            }
+
+            // Escolhe uma pergunta não usada do tópico
+            function pickQuestionFromTopic(topic) {
+                const availableQuestions = [];
+                topic.questions.forEach((q, i) => {
+                    const key = topic.id + '::' + i;
+                    if (!usedQuestions.has(key)) {
+                        availableQuestions.push({ qObj: q, key: key });
+                    }
+                });
+
+                if (availableQuestions.length === 0) return null;
+
+                const pick = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+                usedQuestions.add(pick.key);
+                return pick.qObj;
+            }
+
+            // Escolhe qualquer pergunta restante de qualquer tópico
+            function pickAnyRemainingQuestion() {
+                for (let t of topics) {
+                    const q = pickQuestionFromTopic(t);
+                    if (q) return { topic: t, qObj: q };
+                }
+                return null;
+            }
+
+            // Mostra a pergunta no cartão
+            function presentQuestion(topic, qObj) {
+                currentQuestion = qObj;
+                qTopic.textContent = topic.id;
+                qText.textContent = qObj.q;
+                choicesList.innerHTML = '';
+                feedbackText.style.display = 'none';
+                nextQuestionBtn.style.display = 'none';
+
+                qObj.a.forEach((answer, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
+                    button.textContent = answer;
+                    button.onclick = () => handleAnswer(index, button);
+                    choicesList.appendChild(button);
+                });
+
+                qCard.style.display = 'block';
+            }
+
+            // Processa a resposta do usuário
+            function handleAnswer(chosenIndex, btn) {
+                // Desabilita todos os botões
+                Array.from(choicesList.children).forEach(b => b.disabled = true);
+
+                const correct = (chosenIndex === currentQuestion.correct);
+
+                if (correct) {
+                    score += 10;
+                    btn.classList.add('correct');
+                    feedbackText.textContent = currentQuestion.feedback;
+                    feedbackText.className = 'correct';
+                    
+                    // Vibração de sucesso (apenas para dispositivos móveis)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(200);
+                    }
+                } else {
+                    // Penalidade de -5, mas sem ficar negativo
+                    score = Math.max(0, score - 5); 
+                    btn.classList.add('wrong');
+                    // Marca a correta
+                    choicesList.children[currentQuestion.correct].classList.add('correct');
+                    feedbackText.textContent = `Incorreto. A resposta certa é: ${currentQuestion.a[currentQuestion.correct]}`;
+                    feedbackText.className = 'wrong';
+                    
+                    // Vibração de erro (apenas para dispositivos móveis)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+                }
+
+                totalAsked++;
+                updateInfo();
+                feedbackText.style.display = 'block';
+                nextQuestionBtn.style.display = 'block';
+            }
+
+            // Lógica do botão "Próxima Rodada"
+            function handleNextQuestion() {
+                if (totalAsked >= maxQuestions) {
+                    finishGame();
+                } else {
+                    qCard.style.display = 'none';
+                    spinBtn.disabled = false;
+                }
+            }
+
+            // Finaliza o jogo e mostra o modal
+            function finishGame() {
+                qCard.style.display = 'none';
+                wheelApp.style.display = 'none';
+                wheelApp.setAttribute('aria-hidden', 'true');
+                
+                // Salva a pontuação máxima
+                const oldMax = localStorage.getItem('primeiroChoroMaxScore') || 0;
+                if (score > oldMax) {
+                    localStorage.setItem('primeiroChoroMaxScore', score);
+                }
+
+                // Calcula a faixa de pontuação (arredonda para baixo para a dezena mais próxima)
+                const scoreBracket = Math.max(0, Math.floor(score / 10) * 10);
+                const expr = expressions[scoreBracket];
+
+                // Preenche o modal
+                finalEmoji.textContent = expr.emoji;
+                finalTitle.textContent = expr.title;
+                finalMessage.textContent = expr.message;
+                finalScoreEl.textContent = score;
+
+                // Exibe o modal
+                endGameModal.style.display = 'flex';
+                
+                // Vibração de finalização (apenas para dispositivos móveis)
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100, 50, 100, 50, 200]);
+                }
+            }
+
+            // Reinicia o jogo a partir do modal
+            function restartGame() {
+                endGameModal.style.display = 'none';
+                startScreen.style.display = 'block';
+                loadHighScore(); // Atualiza a pontuação máxima na tela inicial
+            }
+
+            // --- GERAÇÃO DE PÉTALAS ---
+            (function createPetals() {
+                const petals = ['🌸','🌺','🌷','🍃','🌼'];
+                const count = 15; // Aumentei o número de pétalas
+                for(let i=0; i<count; i++){
+                    const s = document.createElement('div');
+                    s.className = 'petal';
+                    s.style.left = Math.random() * 100 + 'vw';
+                    s.style.top = (-10 - Math.random() * 10) + 'vh';
+                    s.style.fontSize = (14 + Math.random() * 28) + 'px';
+                    s.style.animationDuration = (8 + Math.random() * 10) + 's';
+                    s.style.animationDelay = (Math.random() * 6) + 's';
+                    s.textContent = petals[Math.floor(Math.random() * petals.length)];
+                    document.body.appendChild(s);
+                }
+            })();
+
+            // --- EVENT LISTENERS INICIAIS ---
+            loadHighScore();
+            startButton.onclick = startGame;
+            spinBtn.onclick = spinWheel;
+            nextQuestionBtn.onclick = handleNextQuestion;
+            restartGameBtn.onclick = restartGame;
+            
+            // Adiciona suporte para toque na roleta
+            wheel.addEventListener('touchstart', function(e) {
+                if (!spinning) {
+                    spinWheel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
